@@ -234,5 +234,3 @@ aerial-perception/
 - **모델 가중치 (HuggingFace)**:
   [`harveykim/nanodet-plus-1.5x-aerial-6cls`](https://huggingface.co/harveykim/nanodet-plus-1.5x-aerial-6cls)는
   **CC BY-NC 4.0** 라이선스 (비상용·출처 표시).
-
-상용 사용·라이선스 협의: GitHub Issues 또는 조직 [DeepMav](https://github.com/DeepMav) 문의.
