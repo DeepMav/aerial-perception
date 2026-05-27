@@ -1,0 +1,57 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+
+# Virtual envs
+venv/
+.venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+*.swp
+Thumbs.db
+
+# Secrets / credentials
+.env
+*.key
+*token*
+*credentials*
+
+# Model weights (hosted on HuggingFace)
+*.pth
+*.ckpt
+*.onnx
+*.tflite
+*.bin
+*.param
+weights/
+pretrained/
+
+# Datasets (NOT redistributed — AI Hub license)
+data/
+datasets/
+coco_*/
+images_*/
+images_train/
+images_val/
+*.zip
+*.tar
+*.tar.gz
+
+# Training artifacts
+workspace/
+runs/
+logs/
+events.out.*
+checkpoints/
+
+# Notebook outputs
+.ipynb_checkpoints/

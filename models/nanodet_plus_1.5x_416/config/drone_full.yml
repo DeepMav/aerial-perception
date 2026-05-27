@@ -1,0 +1,113 @@
+# Drone 본 학습 config
+# nanodet-plus-m-1.5x_416, 6 클래스
+# 5 GPU 분산, batch 8/GPU = effective 40, AMP fp16, 50 epoch
+save_dir: /home/kim/drone_nanodet/workspace/drone_full
+model:
+  weight_averager:
+    name: ExpMovingAverager
+    decay: 0.9998
+  arch:
+    name: NanoDetPlus
+    detach_epoch: 10
+    backbone:
+      name: ShuffleNetV2
+      model_size: 1.5x
+      out_stages: [2,3,4]
+      activation: LeakyReLU
+    fpn:
+      name: GhostPAN
+      in_channels: [176, 352, 704]
+      out_channels: 128
+      kernel_size: 5
+      num_extra_level: 1
+      use_depthwise: True
+      activation: LeakyReLU
+    head:
+      name: NanoDetPlusHead
+      num_classes: 6
+      input_channel: 128
+      feat_channels: 128
+      stacked_convs: 2
+      kernel_size: 5
+      strides: [8, 16, 32, 64]
+      activation: LeakyReLU
+      reg_max: 7
+      norm_cfg:
+        type: BN
+      loss:
+        loss_qfl:
+          name: QualityFocalLoss
+          use_sigmoid: True
+          beta: 2.0
+          loss_weight: 1.0
+        loss_dfl:
+          name: DistributionFocalLoss
+          loss_weight: 0.25
+        loss_bbox:
+          name: GIoULoss
+          loss_weight: 2.0
+    aux_head:
+      name: SimpleConvHead
+      num_classes: 6
+      input_channel: 256
+      feat_channels: 256
+      stacked_convs: 4
+      strides: [8, 16, 32, 64]
+      activation: LeakyReLU
+      reg_max: 7
+data:
+  train:
+    name: CocoDataset
+    img_path: /home/kim/drone_nanodet/coco_full/train
+    ann_path: /home/kim/drone_nanodet/coco_full/train.json
+    input_size: [416,416]
+    keep_ratio: False
+    pipeline:
+      perspective: 0.0
+      scale: [0.6, 1.4]
+      stretch: [[0.8, 1.2], [0.8, 1.2]]
+      rotation: 0
+      shear: 0
+      translate: 0.2
+      flip: 0.5
+      brightness: 0.2
+      contrast: [0.6, 1.4]
+      saturation: [0.5, 1.2]
+      normalize: [[103.53, 116.28, 123.675], [57.375, 57.12, 58.395]]
+  val:
+    name: CocoDataset
+    img_path: /home/kim/drone_nanodet/coco_full/val
+    ann_path: /home/kim/drone_nanodet/coco_full/val.json
+    input_size: [416,416]
+    keep_ratio: False
+    pipeline:
+      normalize: [[103.53, 116.28, 123.675], [57.375, 57.12, 58.395]]
+device:
+  gpu_ids: [0,1,2,3,4]      # 5 GPU 분산 (Qwen3-Coder와 공존)
+  workers_per_gpu: 2
+  batchsize_per_gpu: 8       # GPU당 ~3GB 사용 (각 GPU 여유 3GB+)
+  precision: 16              # AMP
+schedule:
+  load_model: /home/kim/drone_nanodet/pretrained/nanodet-plus-m-1.5x_416_checkpoint.ckpt
+  optimizer:
+    name: AdamW
+    lr: 0.001                # effective batch 40에 맞춰 조금 더 높임
+    weight_decay: 0.05
+  warmup:
+    name: linear
+    steps: 500
+    ratio: 0.0001
+  total_epochs: 30
+  lr_schedule:
+    name: CosineAnnealingLR
+    T_max: 30
+    eta_min: 0.00005
+  val_intervals: 3          # 3 epoch마다 평가 (시간 절약, 데이터 3배 커진 보정)
+grad_clip: 35
+evaluator:
+  name: CocoDetectionEvaluator
+  save_key: mAP
+log:
+  interval: 50
+
+class_names: ['tree', 'structure', 'building', 'vehicle', 'bridge', 'person']
