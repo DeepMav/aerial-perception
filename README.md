@@ -27,7 +27,6 @@
 | 클래스 | `tree`, `structure`, `building`, `vehicle`, `bridge`, `person` |
 | 학습 데이터 | AI Hub #183 — 청라 도시감시 10m 드론 영상 |
 | Train / Val | 15,814 / 1,023 프레임 (4K JPG) |
-| 학습 환경 | RTX 3070 × 5장, 30 epoch, 약 2시간 25분 |
 | 산출물 | PyTorch (`.pth`, 31MB) · ONNX (11MB) |
 | 라이선스 | Apache 2.0 |
 
