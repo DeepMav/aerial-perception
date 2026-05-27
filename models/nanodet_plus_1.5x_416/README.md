@@ -45,7 +45,7 @@
 본 레포에 가중치는 포함되지 않습니다. HuggingFace에서 다운로드:
 
 ```bash
-huggingface-cli download DeepMav/nanodet-plus-1.5x-aerial-6cls \
+huggingface-cli download harveykim/nanodet-plus-1.5x-aerial-6cls \
     drone_nanodet_416.onnx --local-dir ./weights/
 ```
 
@@ -54,7 +54,7 @@ huggingface-cli download DeepMav/nanodet-plus-1.5x-aerial-6cls \
 ```python
 from huggingface_hub import hf_hub_download
 path = hf_hub_download(
-    repo_id="DeepMav/nanodet-plus-1.5x-aerial-6cls",
+    repo_id="harveykim/nanodet-plus-1.5x-aerial-6cls",
     filename="drone_nanodet_416.onnx"
 )
 ```

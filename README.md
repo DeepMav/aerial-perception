@@ -31,7 +31,7 @@
 | 라이선스 | Apache 2.0 |
 
 모델 가중치는 본 레포에 포함되지 않으며 HuggingFace에서 다운로드:
-[`DeepMav/nanodet-plus-1.5x-aerial-6cls`](https://huggingface.co/DeepMav/nanodet-plus-1.5x-aerial-6cls) *(준비 중)*
+[`harveykim/nanodet-plus-1.5x-aerial-6cls`](https://huggingface.co/harveykim/nanodet-plus-1.5x-aerial-6cls)
 
 ---
 
@@ -110,7 +110,7 @@ pip install -r requirements.txt
 ```bash
 # huggingface-cli 사용
 pip install huggingface_hub
-huggingface-cli download DeepMav/nanodet-plus-1.5x-aerial-6cls \
+huggingface-cli download harveykim/nanodet-plus-1.5x-aerial-6cls \
     drone_nanodet_416.onnx --local-dir ./weights/
 ```
 
