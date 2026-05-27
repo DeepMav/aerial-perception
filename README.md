@@ -50,7 +50,7 @@
 | 전체 mAP@0.5 | — | 30.1% | |
 
 COCO 사전학습 모델은 tree·structure·bridge 같은 클래스 자체가 없음.
-전이학습을 통해 0% → 14~27% 신규 학습. vehicle·person은 +40~57pp 폭발적 향상.
+전이학습을 통해 0% → 14–27% 신규 학습. vehicle·person은 +40–57pp 폭발적 향상.
 
 ---
 
@@ -128,7 +128,7 @@ python scripts/infer_onnx.py \
 1. ONNX → NCNN (`.param` + `.bin`) 변환
 2. NanoDet 공식 [Android NCNN 데모](https://github.com/RangiLyu/nanodet/tree/main/demo_android_ncnn) 활용
 3. 클래스명을 본 프로젝트의 6 클래스로 교체
-4. 예상 추론 속도: 8~25ms (Snapdragon 8 Gen 1+)
+4. 예상 추론 속도: 8–25ms (Snapdragon 8 Gen 1+)
 
 ---
 
@@ -176,7 +176,7 @@ v1.0           정식 릴리즈, 논문, HuggingFace Spaces 데모
 도메인마다 완전 학습 모델을 따로 만들면 약 30MB × N이 필요합니다.
 LoRA 어댑터를 사용하면:
 
-- 2~5MB 어댑터 per 도메인 (cheongna-urban, dusting-rural, delivery, slam-mountain 등)
+- 2–5MB 어댑터 per 도메인 (cheongna-urban, dusting-rural, delivery, slam-mountain 등)
 - 1초 미만에 런타임 교체
 - 베이스 모델은 PyTorch / ONNX 하나만 로드
 
