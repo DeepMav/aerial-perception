@@ -224,4 +224,15 @@ aerial-perception/
 
 ## 라이선스
 
-[Apache 2.0](LICENSE)
+본 레포는 별도 라이선스를 부여하지 않습니다 (All Rights Reserved).
+연구·교육·상용 활용을 원하시면 별도 협의 바랍니다.
+
+다음은 별도 라이선스 적용:
+
+- **NanoDet 베이스 코드** (NanoDet 원본 구조 등):
+  원작자 [@RangiLyu](https://github.com/RangiLyu)의 Apache 2.0 라이선스 유지.
+- **모델 가중치 (HuggingFace)**:
+  [`harveykim/nanodet-plus-1.5x-aerial-6cls`](https://huggingface.co/harveykim/nanodet-plus-1.5x-aerial-6cls)는
+  **CC BY-NC 4.0** 라이선스 (비상용·출처 표시).
+
+상용 사용·라이선스 협의: GitHub Issues 또는 조직 [DeepMav](https://github.com/DeepMav) 문의.
