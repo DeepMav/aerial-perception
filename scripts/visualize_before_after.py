@@ -93,8 +93,8 @@ for img_id in target_ids:
 
     n_pre = len(pre_boxes)
     n_ft = len(ft_boxes)
-    panel_pre = title_bar(draw(raw, pre_boxes), f"BEFORE 학습 전 (COCO Pretrained) - 검출 {n_pre}개", color=(50,50,150))
-    panel_ft  = title_bar(draw(raw, ft_boxes),  f"AFTER  학습 후 (Fine-tuned 30 epoch) - 검출 {n_ft}개", color=(50,120,50))
+    panel_pre = title_bar(draw(raw, pre_boxes), f"BEFORE: COCO Pretrained  -  {n_pre} detections", color=(50,50,150))
+    panel_ft  = title_bar(draw(raw, ft_boxes),  f"AFTER : Fine-tuned 30 epoch  -  {n_ft} detections", color=(50,120,50))
     combined = np.vstack([panel_pre, panel_ft])
     out_path = OUT / f"before_after_id{img_id}.jpg"
     cv2.imwrite(str(out_path), combined, [cv2.IMWRITE_JPEG_QUALITY, 88])
