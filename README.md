@@ -17,8 +17,9 @@
 - v0.3 (Exp J) — 전체 4도메인 + hard-cap 샘플링 (28.5%, 사실상 정체)
 - v0.4 — 고도층화 재샘플링 (29.2%, 소폭 개선)
 - **v0.5 (Exp B, current)** — 입력 416→640. **4-도메인 평균 35.4%** (v0.2 대비 +22%), 4개 도메인 전부 역대 최고.
+- v0.6 (보류) — 타일 파인튜닝 + test-time SAHI 시도. **음성 결과**(SAHI 오탐 폭증으로 v0.5 전체추론을 못 넘음) → 운용은 v0.5 유지. 상세는 로드맵 참조.
 - 상용 배포용 아님. 프로토타입·연구·교육용으로 적합.
-- ⚠️ HuggingFace 호스팅 가중치는 현재 **v0.2** 기준. v0.5 가중치 업로드 예정.
+- ✅ HuggingFace 호스팅 가중치는 **v0.5(입력 640)** 기준 — `.pth` + `drone_nanodet_640.onnx`.
 
 ### 버전별 진화 — 4-도메인 평균 mAP@0.5 (v0.1 → v0.5)
 
@@ -75,7 +76,7 @@
 
 → **v0.5(입력 640)가 4개 도메인 전부에서 역대 최고이거나 동률**. 특히 농촌(농약살포)이 v0.2 대비 2배 이상. v0.3·v0.4(데이터 실험)는 도메인 간 맞교환으로 평균이 정체했으나, v0.5의 해상도 상향이 모든 도메인을 동반 상승시킴. (모든 평가는 동일 파이프라인 — v0.2 재측정값이 기존 발표치와 정확히 일치함을 확인.)
 
-> ⚠️ **현재 HuggingFace 호스팅 가중치는 v0.2.** 위 v0.3~v0.5 수치는 로컬 평가 결과이며, v0.5 가중치는 별도 업로드 예정.
+> ✅ **현재 HuggingFace 호스팅 가중치는 v0.5(입력 640).** 모든 수치는 동일 평가 파이프라인 측정값이며, v0.2 재측정이 기존 발표치와 정확히 일치함을 확인했습니다.
 
 ### 청라 10m 클래스별 (v0.1 vs v0.2, 같은 Val 1,023장)
 
@@ -225,14 +226,14 @@ pip install -r requirements.txt
 # huggingface-cli 사용
 pip install huggingface_hub
 huggingface-cli download harveykim/nanodet-plus-1.5x-aerial-6cls \
-    drone_nanodet_416.onnx --local-dir ./weights/
+    drone_nanodet_640.onnx --local-dir ./weights/
 ```
 
 ### 3. ONNX 추론 (예정)
 
 ```bash
 python scripts/infer_onnx.py \
-    --model ./weights/drone_nanodet_416.onnx \
+    --model ./weights/drone_nanodet_640.onnx \
     --image path/to/aerial.jpg \
     --score-threshold 0.3
 ```
@@ -284,10 +285,15 @@ v0.4          고도층화 재샘플링 (29.2%)
 v0.5 (Exp B)  입력 해상도 416 → 640 (4-도메인 평균 35.4%, current)
                  - 4개 도메인 전부 역대 최고. person 작은객체 recall 급등
                  - 단, 15m 고도 차량은 여전히 미해결(해상도만으론 부족)
+v0.6 (보류)   타일 파인튜닝 + test-time SAHI — 음성 결과, 운용은 v0.5 유지
+                 - 1024 타일로 v0.5 파인튜닝 후 SAHI 추론. vehicle recall은 회복했으나
+                   building 오탐 폭증(FPPI ~24)으로 종합 mAP가 v0.5 전체추론(0.417)을 못 넘음
+                 - px 게이팅은 vehicle과 structure 박스크기 분포가 겹쳐 분리 실패
+                   (오탐 줄이면 차량도 동반 사망: vehicle recall 0.45→0.09)
+                 - 결론: test-time SAHI 단독으론 부족. train-time 타일링 + score 캘리브레이션
+                   필요(ROI 불확실, v0.5가 이미 더 나음)
 
 [예정]
-v0.6          타일/SAHI 추론 — 15m 고도 차량·작은 객체 정면 돌파
-                 - 4K 원본 타일링으로 유효해상도↑, 예상 농촌·도시 동반 상승
 v0.7          tree 오탐 negative mining — FPPI 감축 (현재 tree가 오탐의 60%)
 v0.8          YOLOv8 / RT-DETR 베이스라인 비교 + 리더보드
 v0.9          LoRA 핫스왑 엔진
@@ -312,7 +318,7 @@ LoRA 어댑터를 사용하면:
 ## 한계 및 주의사항 (v0.5 기준)
 
 - **농촌·시골 도메인** — v0.2까지 약점(21.3%)이었으나 농약살포 학습 + 640으로 **v0.5에서 43.6%로 개선**. 도시 대비 데이터량은 여전히 적음.
-- **15m 이상 고도의 차량** — **v0.5(640)으로도 검출 실패**(vehicle@15m ~0%). 해상도 상향만으론 한계 → 타일/SAHI 추론 필요(로드맵 v0.6).
+- **15m 이상 고도의 차량** — **v0.5(640)으로도 검출 실패**(vehicle@15m ~0%). 해상도 상향만으론 한계. v0.6에서 타일/SAHI 추론을 시도했으나 test-time SAHI 단독은 오탐 폭증으로 부족 → train-time 타일링 필요(로드맵 v0.6 참조).
 - **tree 오탐** — 잎사귀·관목·배경을 나무로 오인. 전 오탐의 ~60%가 tree (FPPI 높음). negative mining 예정(v0.7).
 - **야간/일출/일몰** — 학습 데이터 부재. 추정 mAP <10%.
 - **640 입력의 비용** — 416 대비 연산·메모리 ~2.4배. 8GB GPU에선 batch 절반(effective 50). 모바일 배포 시 추론 지연 증가 고려.
